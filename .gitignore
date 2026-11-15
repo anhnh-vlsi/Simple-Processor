@@ -1,0 +1,6 @@
+# Simulation output
+*.out
+*.vcd
+
+# Generated Verilog folder
+verilog

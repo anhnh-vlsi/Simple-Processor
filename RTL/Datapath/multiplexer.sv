@@ -16,7 +16,7 @@ module multiplexer (
 );
 
 	always_comb begin
-		if (G_out) 
+		if (Gout) 
 			Bus = G_data;
 		else if (DINout)
 			Bus = DIN;
