@@ -5,4 +5,8 @@ module register_G (
     output logic [8:0]  G_data
 );
 
+	always_ff @(posedge Clk) begin
+		if (Gin) G_data <= Alu_result;
+	end
+
 endmodule

@@ -5,4 +5,8 @@ module register_A (
     output logic [8:0]  A_data
 );
 
+	always_ff @(posedge Clock) begin
+		if (Ain) A_data <= Bus;
+	end
+
 endmodule

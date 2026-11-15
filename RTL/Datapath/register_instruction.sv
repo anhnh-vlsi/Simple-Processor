@@ -5,4 +5,8 @@ module register_instruction (
     output logic [8:0]  IR
 );
 
+	always_ff @(posedge Clk) begin
+		if (IRin) IR <= DIN;
+	end
+
 endmodule

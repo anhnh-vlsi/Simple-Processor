@@ -15,5 +15,25 @@ module multiplexer (
     output logic [8:0]  Bus
 );
 
+	always_comb begin
+		if (G_out) 
+			Bus = G_data;
+		else if (DINout)
+			Bus = DIN;
+		else begin
+			case (Rout)
+                8'b0000_0001: Bus = R0;
+                8'b0000_0010: Bus = R1;
+                8'b0000_0100: Bus = R2;
+                8'b0000_1000: Bus = R3;
+                8'b0001_0000: Bus = R4;
+                8'b0010_0000: Bus = R5;
+                8'b0100_0000: Bus = R6;
+                8'b1000_0000: Bus = R7;
+                default:      Bus = 9'b0;
+            endcase
+		end 
+	end
+
 endmodule
 

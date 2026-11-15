@@ -12,4 +12,15 @@ module register_file (
     output logic [8:0]  R7
 );
 
+	always_ff @(posedge Clk) begin
+        if (Rin[0]) R0 <= Bus;
+        if (Rin[1]) R1 <= Bus;
+        if (Rin[2]) R2 <= Bus;
+        if (Rin[3]) R3 <= Bus;
+        if (Rin[4]) R4 <= Bus;
+        if (Rin[5]) R5 <= Bus;
+        if (Rin[6]) R6 <= Bus;
+        if (Rin[7]) R7 <= Bus;
+    end
+
 endmodule
