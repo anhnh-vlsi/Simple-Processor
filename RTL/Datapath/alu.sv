@@ -7,4 +7,6 @@ module alu (
 
 // Addsub = 0 : + otherwise -
 
+	assign Alu_result = Addsub ? A_data - Bus : A_data + Bus;
+
 endmodule
