@@ -1,6 +1,6 @@
 module register_file (
     input logic         Clk,
-    input logic [7:0]   Rin,
+    input logic [6:0]   Rin,
     input logic [8:0]   Bus,
     output logic [8:0]  R0,
     output logic [8:0]  R1,
@@ -8,8 +8,7 @@ module register_file (
     output logic [8:0]  R3,
     output logic [8:0]  R4,
     output logic [8:0]  R5,
-    output logic [8:0]  R6,
-    output logic [8:0]  R7
+    output logic [8:0]  R6
 );
 
 	always_ff @(posedge Clk) begin
@@ -20,7 +19,6 @@ module register_file (
         if (Rin[4]) R4 <= Bus;
         if (Rin[5]) R5 <= Bus;
         if (Rin[6]) R6 <= Bus;
-        if (Rin[7]) R7 <= Bus;
     end
 
 endmodule

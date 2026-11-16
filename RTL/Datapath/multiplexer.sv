@@ -1,7 +1,8 @@
 module multiplexer (
     input logic         DINout,
     input logic         Gout,
-    input logic [7:0]   Rout,
+    input logic [6:0]   Rout,
+    input logic 		PCout,
     input logic [8:0]   DIN,
     input logic [8:0]   G_data,
     input logic [8:0]   R0,
@@ -11,7 +12,7 @@ module multiplexer (
     input logic [8:0]   R4,
     input logic [8:0]   R5,
     input logic [8:0]   R6,
-    input logic [8:0]   R7,
+    input logic [8:0]   PC,
     output logic [8:0]  Bus
 );
 
@@ -20,18 +21,19 @@ module multiplexer (
 			Bus = G_data;
 		else if (DINout)
 			Bus = DIN;
+		else if (PCout)
+			Bus = PC;
 		else begin
 			case (Rout)
-                8'b0000_0001: Bus = R0;
-                8'b0000_0010: Bus = R1;
-                8'b0000_0100: Bus = R2;
-                8'b0000_1000: Bus = R3;
-                8'b0001_0000: Bus = R4;
-                8'b0010_0000: Bus = R5;
-                8'b0100_0000: Bus = R6;
-                8'b1000_0000: Bus = R7;
-                default:      Bus = 9'b0;
-            endcase
+			    7'b0000001: Bus = R0;
+			    7'b0000010: Bus = R1;
+			    7'b0000100: Bus = R2;
+			    7'b0001000: Bus = R3;
+			    7'b0010000: Bus = R4;
+			    7'b0100000: Bus = R5;
+			    7'b1000000: Bus = R6;
+			    default:    Bus = 9'b0;
+			endcase
 		end 
 	end
 
