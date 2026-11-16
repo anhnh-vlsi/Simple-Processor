@@ -83,7 +83,11 @@ module control_unit (
 				else next_state = T0;
 			end
 			T1: begin
-				next_state = T2;
+				case (opcode) 
+					OP_MV, OP_MOVI: next_state = T0;
+					OP_ADD, OP_SUB: next_state = T2;
+					default: next_state = T0;
+				endcase
 			end
 			T2: begin
 				next_state = T3;
