@@ -1,0 +1,178 @@
+RTL = (~/Simple-Processor/RTL)
+Memory = (~/Simple-Processor/Memory)
+Peripheral = (~/Simple-Peripheral/Peripheral)
+
+Common = (RTL/Common)
+Control_unit = (RTL/Control_Unit)
+Datapath = (RTL/Datapath)
+Top = (RTL/Top)
+
+
+/*************************/
+
+simple processor:
+Common/decoder3to8.sv:
+	Added: 	input logic			EN,
+			input logic [2:0] 	din,
+			output logic [7:0]	dout
+
+Control_unit/control_unit.sv:
+	Added:	input logic         Clk,
+			input logic         Resetn,
+			input logic         Run,
+			input logic [8:0]   IR,
+			output logic        IRin,
+			output logic        Ain,
+			output logic        Gin,
+			output logic        Addsub,
+			output logic        Gout,
+			output logic        DINout,
+			output logic        Done,
+			output logic [7:0]  Rin,
+			output logic [7:0]  Rout
+
+Datapath/alu.sv:
+	Added:	input logic [8:0]   A_data,
+			input logic [8:0]   Bus,
+			input logic         Addsub,
+			output logic [8:0]  Alu_result
+
+Datapath/multiplexer.sv:
+	Added: 	input logic         DINout,
+			input logic         Gout,
+			input logic [7:0]   Rout,
+			input logic [8:0]   DIN,
+			input logic [8:0]   G_data,
+			input logic [8:0]   R0,
+			input logic [8:0]   R1,
+			input logic [8:0]   R2,
+			input logic [8:0]   R3,
+			input logic [8:0]   R4,
+			input logic [8:0]   R5,
+			input logic [8:0]   R6,
+			input logic [8:0]   R7,
+			output logic [8:0]  Bus
+
+Datapath/register_A.sv:
+	Added: 	input logic [8:0]   Bus,
+			input logic         Ain,
+			input logic         Clk,
+			output logic [8:0]  A_data
+
+Datapath/register_G.sv:
+	Added:	input logic         Gin,
+			input logic         Clk,
+			input logic [8:0]   Alu_result,
+			output logic [8:0]  G_data
+
+Datapath/register_file.sv:
+	Added:	input logic         Clk,
+			input logic [7:0]   Rin,
+			input logic [8:0]   Bus,
+			output logic [8:0]  R0,
+			output logic [8:0]  R1,
+			output logic [8:0]  R2,
+			output logic [8:0]  R3,
+			output logic [8:0]  R4,
+			output logic [8:0]  R5,
+			output logic [8:0]  R6,
+			output logic [8:0]  R7
+
+Datapath/register_instruction.sv:
+	Added:	input logic         IRin,
+			input logic         Clk,
+			input logic [8:0]   DIN,
+			output logic [8:0]  IR
+Top/proc.sv:
+	Added: 	input  logic [8:0] 	DIN,
+			input  logic       	Resetn,
+			input  logic       	Clock,
+			input  logic       	Run,
+			output logic       	Done,
+			output logic [8:0] 	BusWires
+
+/*************************/
+
+enhanced processor:
+
+Files added: 		Datapath/register_ADDR.sv
+					Datapath/register_DOUT.sv
+					Datapath/register_W.sv
+					Datapath/program_counter.sv
+					Memory/memory.sv
+					Peripheral/register_led.sv
+					Common/address_decoder.sv
+
+Files modified: 	Control_unit/control_unit.sv
+					Datapath/multiplexer.sv
+					Datapath/register_file.sv
+
+Files unchanged: 	Datapath/alu.sv
+					Datapath/register_A.sv
+					Datapath/register_G.sv
+					Datapath/register_instruction.sv
+
+Control_unit/control_unit.sv:
+	Modified: 	output logic [7:0] 	Rin -> output logic [6:0] 	Rin 	// for mux
+				output logic [7:0] 	Rout -> output logic [6:0] 	Rout 	// for mux
+	Added:		input logic [8:0]	G_data								// for MVNZ	
+				output logic 		PCout 								// for mux
+			    output logic		PCin 								// for program_counter
+			    output logic		Incr_pc 							// for program_counter
+			    output logic 		ADDRin 								// for ADDR register
+			    output logic		DOUTin 								// for DOUT register
+			    output logic		W_D 								// for W register
+
+Datapath/multiplexers.sv:
+	Removed:	input logic [8:0] 	R7
+	Modified: 	input logic [7:0] 	Rout -> input logic [6:0] 	Rout
+	Added:		input logic 		PCout
+				input logic [8:0]   PC
+
+Datapath/register_file.sv:
+	Removed: 	input logic [8:0] 	R7
+	Modified: 	input logic [7:0]   Rin -> input logic [6:0]   Rin
+
+Datapath/register_ADDR.sv: 
+	Added: 		input logic 		Clk,
+				input logic 		ADDRin,
+				input logic [8:0]	Bus,
+				output logic [8:0]	ADDR
+	
+Datapath/register_DOUT.sv:
+	Added: 		input logic 		Clk,
+				input logic 		DOUTin,
+				input logic [8:0]	Bus,
+				output logic [8:0]	DOUT
+
+Datapath/register_W.sv:
+	Added:		input logic			Clk,
+				input logic 		W_D,
+				output logic 		W
+
+Datapath/program_counter.sv:
+	Added:		input logic			Clk,
+				input logic			Resetn,
+				input logic			PCin,
+				input logic 		Incr_pc,
+				input logic [8:0]	Bus,
+				output logic [8:0]	PC
+
+Memory/memory.sv:
+	Added:		input  logic       Clk,
+				input  logic [6:0] Address,
+				input  logic [8:0] Data,
+				input  logic       W,
+				output logic [8:0] Dout
+
+Peripheral/register_led.sv:
+	Added: 		input  logic       	Clk,
+				input  logic      	Load,
+				input  logic [8:0] 	Data,
+				output logic [8:0] 	LED 
+
+Common/address_decoder.sv:
+	Added:		input logic [8:0] 	ADDR,
+				input logic			W,
+				output logic 		LED_en,
+				output logic		Mem_en
