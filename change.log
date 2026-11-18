@@ -176,3 +176,11 @@ Common/address_decoder.sv:
 				input logic			W,
 				output logic 		LED_en,
 				output logic		Mem_en
+
+/*************************/
+
+FPU enhanced processor
+
+Files added: 	Datapath/FPU.sv
+				Datapath/register_AF.sv
+				Datapath/register_GF.sv
