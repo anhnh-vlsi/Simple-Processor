@@ -1,4 +1,3 @@
-
 module system_top (
     input  logic        CLOCK_50,
     input  logic [9:0]  SW,
@@ -6,34 +5,24 @@ module system_top (
     output logic [8:0]  LEDR
 );
 
-    // --------------------------------
-    // Internal signals
-    // --------------------------------
-
     logic Resetn;
+    logic Run_meta;
     logic Run_sync;
 
     logic [8:0] DIN;
     logic [8:0] ADDR;
     logic [8:0] DOUT;
+    logic [8:0] BusWires;
 
     logic W;
     logic Done;
+    logic LED_en;
+    logic Mem_en;
 
-    logic Mem_W;
-    logic LED_W;
-
-    logic [8:0] LED_data;
-
-    // --------------------------------
-    // Input signals
-    // --------------------------------
-
+    // KEY0 is active-low on the DE-series board.
     assign Resetn = KEY[0];
 
-    // Synchronize asynchronous Run input
-    logic Run_meta;
-
+    // Synchronize the asynchronous Run switch to CLOCK_50.
     always_ff @(posedge CLOCK_50 or negedge Resetn) begin
         if (!Resetn) begin
             Run_meta <= 1'b0;
@@ -45,10 +34,7 @@ module system_top (
         end
     end
 
-    // --------------------------------
-    // Processor
-    // --------------------------------
-
+    // Enhanced processor with Lab 6 FPU integrated internally.
     proc u_proc (
         .DIN     (DIN),
         .Resetn  (Resetn),
@@ -57,39 +43,35 @@ module system_top (
         .ADDR    (ADDR),
         .DOUT    (DOUT),
         .W       (W),
-        .Done    (Done)
+        .Done    (Done),
+        .BusWires(BusWires)
     );
 
-    // --------------------------------
-    // Address Decoder
-    // --------------------------------
-	 
-	 assign Mem_W = W & ~ADDR[8] & ~ADDR[7];
-	 assign LED_W = W & ~ADDR[8] & ADDR[7];
+    // Decode writes to RAM (ADDR[8:7] = 2'b00)
+    // and the LED peripheral (ADDR[8:7] = 2'b01).
+    address_decoder u_address_decoder (
+        .ADDR   (ADDR),
+        .W      (W),
+        .LED_en (LED_en),
+        .Mem_en (Mem_en)
+    );
 
-    // --------------------------------
-    // RAM IP: 128 x 9
-    // --------------------------------
-
+    // 128 x 9 on-chip RAM IP. Its output is unregistered.
+    // The IP variation must be named ram_128x9 and expose these ports.
     ram_128x9 u_ram (
         .address (ADDR[6:0]),
         .clock   (CLOCK_50),
         .data    (DOUT),
-        .wren    (Mem_W),
+        .wren    (Mem_en),
         .q       (DIN)
     );
 
-    // --------------------------------
-    // LED Register: 9 bits
-    // --------------------------------
-
-    always_ff @(posedge CLOCK_50 or negedge Resetn) begin
-        if (!Resetn)
-            LED_data <= 9'b0;
-        else if (LED_W)
-            LED_data <= DOUT;
-    end
-
-    assign LEDR = LED_data;
+    // Memory-mapped 9-bit LED peripheral.
+    register_led u_led_register (
+        .Clk  (CLOCK_50),
+        .Load (LED_en),
+        .Data (DOUT),
+        .LED  (LEDR)
+    );
 
 endmodule
