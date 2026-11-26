@@ -1,7 +1,7 @@
 module system_top (
     input  logic        CLOCK_50,
-    input  logic [9:0]  SW,
-    input  logic [1:0]  KEY,
+    input  logic [0:0]  SW,
+    input  logic [0:0]  KEY,
     output logic [8:0]  LEDR
 );
 
@@ -29,7 +29,7 @@ module system_top (
             Run_sync <= 1'b0;
         end
         else begin
-            Run_meta <= SW[9];
+            Run_meta <= SW[0];
             Run_sync <= Run_meta;
         end
     end
